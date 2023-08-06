@@ -1,0 +1,15 @@
+version: '1.0'
+services:
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    env_file:
+      - ./.env
+  web:
+    build:
+      ./testcase/
+    depends_on:
+      - db
+    env_file:
+      - ./.env
