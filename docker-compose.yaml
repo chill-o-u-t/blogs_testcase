@@ -5,7 +5,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
   redis:
     image: redis:5-alpine
@@ -13,18 +13,23 @@ services:
   web:
     build:
       ./testcase/
-    restart: always
+    restart: on-failure
+    volumes:
+      - ./testcase:/testcase
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
-#  celery:
-#    build: .
-#    command: celery worker --app=core --loglevel=info --logfile=logs/celery.log
-#    volumes:
-#      - ./testcase:/usr/src/app
-#    depends_on:
-#      - redis
-#      - web
-#      - db
+  celery:
+    build: ./testcase/
+    hostname: celety
+    links:
+      - redis
+    entrypoint: celery
+    command: -A celery_app:app worker --loglevel=info
+    volumes:
+      - ./testcase:/testcase
+    depends_on:
+      - redis
+      - db
