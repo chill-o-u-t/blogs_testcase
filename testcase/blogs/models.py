@@ -1,15 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+User = get_user_model()
 
-class Blog(models.Model):
-    author = models.CharField(
+
+class Blog(User):
+    blog_name = models.CharField(
         null=False,
         max_length=16
     )
 
     def __str__(self):
-        return f'{self.author}'
+        return f'{self.blog_name}'
 
 
 class Post(models.Model):
@@ -47,4 +49,16 @@ class Follow(models.Model):
     )
 
 
-
+class ReadPost(models.Model):
+    post = models.OneToOneField(
+        Post,
+        on_delete=models.CASCADE,
+        primary_key=True
+    )
+    blog = models.OneToOneField(
+        Blog,
+        on_delete=models.CASCADE,
+    )
+    is_read = models.BooleanField(
+        default=False
+    )
