@@ -1,26 +1,78 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-User = get_user_model()
 
-
-class Blog(User):
-    blog_name = models.CharField(
+class User(AbstractUser):
+    USERNAME_FIELD: str = 'email'
+    REQUIRED_FIELDS = ['username']
+    email = models.EmailField(
+        max_length=254,
+        unique=True,
         null=False,
-        max_length=16
+        blank=False
+    )
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+    )
+    first_name = models.CharField(
+        max_length=30
+    )
+    last_name = models.CharField(
+        max_length=30
+    )
+
+
+class Blog(models.Model):
+    name = models.CharField(
+        unique=True,
+        null=False,
+        blank=False
+    )
+    author = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='blogs'
     )
 
     def __str__(self):
-        return f'{self.blog_name}'
+        return f'{self.name}'
+
+
+class Follow(models.Model):
+    blog = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follows'
+    )
+    follower = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=('blog', 'follower'), name='follow_unique'),
+            models.CheckConstraint(
+                check=~models.Q(blog=models.F('follower')),
+                name='users_cannot_follow_themselves'
+            )
+        ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
 
 class Post(models.Model):
-    text = models.TextField(max_length=140)
+    text = models.TextField(
+        max_length=140
+    )
     title = models.CharField(
-        max_length=20,
+        max_length=30,
         null=False
     )
-    create_datetime = models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True,
     )
     blog = models.ForeignKey(
@@ -29,35 +81,20 @@ class Post(models.Model):
         related_name='posts'
     )
 
-    def __str__(self):
-        return f'{self.text[:30]}'
-
     class Meta:
-        ordering = ('create_datetime',)
+        ordering = ('created_at',)
 
 
-class Follow(models.Model):
-    followed = models.ForeignKey(
-        Blog,
+class IsRead(models.Model):
+    user = models.OneToOneField(
+        User,
         on_delete=models.CASCADE,
-        related_name='author',
+        related_name='author'
     )
-    follower = models.ForeignKey(
-        Blog,
-        on_delete=models.CASCADE,
-        related_name='follower'
-    )
-
-
-class ReadPost(models.Model):
-    post = models.OneToOneField(
+    post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        primary_key=True
-    )
-    blog = models.OneToOneField(
-        Blog,
-        on_delete=models.CASCADE,
+        related_name='readed'
     )
     is_read = models.BooleanField(
         default=False
