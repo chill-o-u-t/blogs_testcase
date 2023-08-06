@@ -4,9 +4,14 @@ billiard==3.6.4.0
 celery==4.4.7
 Django==4.2.4
 flower==0.9.7
+gunicorn==21.2.0
 humanize==4.7.0
 kombu==4.6.11
+packaging==23.1
 prometheus-client==0.8.0
+psycopg2==2.9.7
+psycopg2-binary==2.9.7
+python-dotenv==1.0.0
 pytz==2023.3
 redis==3.5.3
 sqlparse==0.4.4

@@ -1,0 +1,30 @@
+version: '1.0'
+services:
+  db:
+    image: postgres:13.0-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+  redis:
+    image: redis:5-alpine
+
+  web:
+    build:
+      ./testcase/
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
+#  celery:
+#    build: .
+#    command: celery worker --app=core --loglevel=info --logfile=logs/celery.log
+#    volumes:
+#      - ./testcase:/usr/src/app
+#    depends_on:
+#      - redis
+#      - web
+#      - db
