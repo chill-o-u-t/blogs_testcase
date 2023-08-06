@@ -18,4 +18,41 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    blog = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='blog'
+    )
 
+    class Meta:
+        model = Post
+        fields = '__all__'
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        slug_field='author',
+        read_only=True
+    )
+
+    class Meta:
+        model = Blog
+        fields = '__all__'
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    pass
+
+
+class IsReadSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='user'
+    )
+    blog = serializers.SlugRelatedField(
+        required=True,
+        slug_field='blog'
+    )
+
+    class Meta:
+        model = IsRead
+        fields = '__all__'
