@@ -35,7 +35,7 @@ class FollowViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         result = []
         posts = Post.objects.all(
-            follower__blog=self.request.user,
+            follower=get_object_or_404(Post, blog=self.request.user),
         ).all()
         for post in posts:
             result.append(

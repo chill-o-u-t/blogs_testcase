@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from ..blogs.models import Blog, Follow, Post
+from blogs.models import Blog, Follow, Post
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
+    blog_name = serializers.SlugRelatedField(
         read_only=True,
         slug_field='author'
     )
@@ -63,7 +63,10 @@ class FollowSerializer(serializers.ModelSerializer):
 
 class ReadBlogSerializer(serializers.ModelSerializer):
     post = serializers.SlugRelatedField(
+        slug_field='post',
+        read_only=True
     )
     blog = serializers.SlugRelatedField(
-        read_only=True
+        read_only=True,
+        slug_field='blog'
     )
