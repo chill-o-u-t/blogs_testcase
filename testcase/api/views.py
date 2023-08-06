@@ -7,6 +7,7 @@ from .serializers import (
     PostSerializer,
     FollowSerializer,
 )
+from .pagination import PagePagination
 
 from blogs.models import (
     Post,
@@ -24,6 +25,7 @@ class BlogViewSet(viewsets.ModelViewSet):
 
 class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
+    pagination_class = PagePagination
 
     def get_blog(self):
         return get_object_or_404(Blog, author=self.request.user)
