@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Blog(models.Model):
-    author =models.CharField(
+    author = models.CharField(
         null=False,
         max_length=16
     )

@@ -5,9 +5,15 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from .serializers import (
     PostSerializer,
-    FollowSerializer
+    FollowSerializer,
+    BlogSerrializer
 )
 from blogs.models import Post, Blog, Follow
+
+
+class BlogViewSet(viewsets.ModelViewSet):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerrializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
