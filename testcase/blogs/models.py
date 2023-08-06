@@ -2,14 +2,10 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 
-User = get_user_model()
-
-
 class Blog(models.Model):
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='author'
+    author =models.CharField(
+        null=False,
+        max_length=16
     )
 
     def __str__(self):
@@ -24,9 +20,6 @@ class Post(models.Model):
     )
     create_datetime = models.DateTimeField(
         auto_now_add=True,
-    )
-    is_read = models.BooleanField(
-        default=False
     )
     blog = models.ForeignKey(
         Blog,
