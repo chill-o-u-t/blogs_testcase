@@ -27,9 +27,6 @@ ____
 ### Запуск celery для отправки сообщений
 ```sudo docker-compose exec celery celery -A testcase beat```
 
-```
-api_yamdb\manage.py
-```
 ### Информация об авторе проекта
 ```Ivan Morozov```
 
