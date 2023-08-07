@@ -1,25 +1,26 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .serializers import (
     BlogSerializer,
     PostSerializer,
-    FollowSerializer,
+    IsReadSerializer,
+    FollowSerializer
 )
 from .pagination import PagePagination
 
 from blogs.models import (
-    Post,
-    Blog,
     User,
-    Follow,
-    IsRead
+    Post,
+    IsRead,
+    Follow
 )
 
 
 class BlogViewSet(viewsets.ModelViewSet):
-    queryset = Blog.objects.all()
+    queryset = User.objects.all()
     serializer_class = BlogSerializer
 
 
@@ -27,34 +28,33 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     pagination_class = PagePagination
 
-    def get_blog(self):
-        return get_object_or_404(Blog, author=self.request.user)
+    def get_blog_id(self):
+        return self.kwargs.get('blog_id')
 
     def get_queryset(self):
         return Post.objects.filter(
-            blog=self.get_blog()
-        ).all()
+            blog__id=self.get_blog_id()
+        )
 
     def perform_create(self, serializer):
-        serializer.save(blog=self.get_blog())
+        serializer.save(blog__id=self.get_blog_id())
 
     @action(
         methods=['GET'],
         detail=False
     )
-    def mark_as_read(self):
-        IsRead.objects.create(
-            post=get_object_or_404(Post, blog=self.get_blog()),
+    def mark_as_read(self, request, blog_id):
+        obj = IsRead.objects.create(
+            user=self.request.user,
+            post__id=self.request.data['pk'],
             is_read=True
         )
-        return self.queryset
+        serializer = IsReadSerializer(obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
-
-    def get_blog(self):
-        return get_object_or_404(Blog, author=self.request.user)
 
     def get_queryset(self):
         posts = Follow.objects.filter(
@@ -74,5 +74,5 @@ class FollowViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(
             blog=self.get_blog(),
-            post=get_object_or_404(Post, blog=self.get_blog())
+            follower=self.request.user
         )

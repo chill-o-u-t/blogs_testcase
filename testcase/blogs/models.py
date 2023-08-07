@@ -5,6 +5,7 @@ from django.db import models
 class User(AbstractUser):
     USERNAME_FIELD: str = 'email'
     REQUIRED_FIELDS = ['username']
+
     email = models.EmailField(
         max_length=254,
         unique=True,
@@ -21,26 +22,18 @@ class User(AbstractUser):
     last_name = models.CharField(
         max_length=30
     )
-
-
-class Blog(models.Model):
-    name = models.CharField(
+    blog = models.CharField(
+        default=f'{username}_blog',
         unique=True,
-        null=False,
-        blank=False
-    )
-    author = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='blogs'
+        auto_created=True
     )
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.username}_blog'
 
 
 class Follow(models.Model):
-    blog = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='follows'
@@ -54,9 +47,9 @@ class Follow(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=('blog', 'follower'), name='follow_unique'),
+                fields=('user', 'follower'), name='follow_unique'),
             models.CheckConstraint(
-                check=~models.Q(blog=models.F('follower')),
+                check=~models.Q(user=models.F('follower')),
                 name='users_cannot_follow_themselves'
             )
         ]
@@ -76,7 +69,7 @@ class Post(models.Model):
         auto_now_add=True,
     )
     blog = models.ForeignKey(
-        Blog,
+        User,
         on_delete=models.CASCADE,
         related_name='posts'
     )
