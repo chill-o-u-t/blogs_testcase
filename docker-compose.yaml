@@ -27,7 +27,9 @@ services:
     links:
       - redis
     entrypoint: celery
-    command: -A testcase.celery_app:app worker --loglevel=info
+    command:
+      - -A testcase.celery_app:app worker --loglevel=info
+      - -A testcase beat
     volumes:
       - ./testcase:/testcase
     depends_on:
