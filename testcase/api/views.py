@@ -64,7 +64,7 @@ class FollowViewSet(viewsets.ModelViewSet):
         for post in posts:
             read = IsRead.objects.filter(
                 post=post,
-                blog=self.get_blog()
+                blog__id=self.request.data['pk']
             ).first()
             if read.is_read is True:
                 break
@@ -73,6 +73,6 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(
-            blog=self.get_blog(),
+            blog=self.request.data['pk'],
             follower=self.request.user
         )
