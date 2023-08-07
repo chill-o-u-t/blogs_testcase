@@ -9,6 +9,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "testcase.settings")
 app = Celery("testcase")
 app.config_from_object("django.conf:settings")
 app.conf.broker_url = settings.CELERY_BROKER_URL
+app.conf.result_backend = settings.CELERY_RESULT_BACKEND
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {

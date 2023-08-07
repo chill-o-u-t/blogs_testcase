@@ -9,6 +9,7 @@ services:
 
   redis:
     image: redis:5-alpine
+    hostname: redis
 
   web:
     build:
@@ -28,6 +29,8 @@ services:
       - redis
     entrypoint: celery
     command: -A celery_app.app worker --loglevel=info
+    env_file:
+      - .env
     volumes:
       - ./testcase:/testcase
     depends_on:

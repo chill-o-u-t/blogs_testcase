@@ -1,7 +1,7 @@
 from django.template import Template, Context
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
-from testcase.celery import app
+from celery_app import app
 from blogs.models import Post, Follow, User
 
 
