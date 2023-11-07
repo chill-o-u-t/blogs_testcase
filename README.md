@@ -9,7 +9,7 @@ ____
 - пароль базы данных ```POSTGRES_PASSWORD=postgres```
 - адрес базы ```DB_HOST=db``` 
 - порт базы```DB_PORT=5432```
-
+dfgdfgdfg
 
 ### Запуск приложения:
 ```docker-compose up```
